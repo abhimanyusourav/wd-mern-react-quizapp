@@ -1,5 +1,6 @@
 import React from 'react'
 import { myBasket } from '../App'
+import Timer from './Timer'
 
 const questions = [
   {
@@ -36,51 +37,45 @@ const questions = [
   }
 ]
 
-function Question() {
-
+function Question(props) {
   const { stage, myScore, mySetScore } = React.useContext(myBasket)
-
   const [questionIndex, setQuestionIndex] = React.useState(0)
-
   const [answerStatus, setAnswerStatus] = React.useState(false)
 
   function goToNextQuestion() {
-
     if (answerStatus) {
       setAnswerStatus(false)
       setQuestionIndex(questionIndex + 1)
     } else {
       alert("Please select the answer and then continue")
     }
-
-
   }
 
   function collectAnswer(selectedAnswer) {
-
     if (questions[questionIndex].Answer == selectedAnswer) {
-
       mySetScore(myScore + 1)
+    } else {
+      if (myScore < 0) {
+        myScore = 0
+      } else {
+        mySetScore(myScore - 1)
+      }
     }
-
     setAnswerStatus(true)
-
   }
 
   function goToResult() {
-
     if (answerStatus) {
       setAnswerStatus(false)
       stage("result")
     } else {
       alert("Please select the answer and then continue")
     }
-
-
   }
 
   return (
     <div>
+      {props.children}
       <h2>{questions[questionIndex].title}</h2>
       <button onClick={function () {
         collectAnswer("A")
@@ -95,8 +90,6 @@ function Question() {
         collectAnswer("D")
       }} >{questions[questionIndex].D}</button>
       {questionIndex == questions.length - 1 ? <button onClick={goToResult} >Submit</button> : <button onClick={goToNextQuestion} >Next</button>}
-
-
     </div>
   )
 }
